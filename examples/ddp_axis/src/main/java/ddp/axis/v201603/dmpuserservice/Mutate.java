@@ -35,7 +35,7 @@ public class Mutate {
 
     DmpUserListServiceInterface userListService = ddpServices.get(session, DmpUserListServiceInterface.class);
 
-    ClientCustomerId clientCustomerId = new ClientCustomerId(Product.ADWORDS, 153976109L);
+    ClientCustomerId clientCustomerId = new ClientCustomerId(Product.INVITE_PARTNER, 914039L);
 
     UserList userList = new BasicUserList();
     userList.setName("Demographic segment #" + System.currentTimeMillis());

@@ -91,11 +91,6 @@ public class DdpAxisHeaderHandler implements HeaderHandler<DdpSession, DdpServic
 
       Object soapHeader = createSoapHeader(ddpServiceDescriptor);
 
-      BeanUtils.setProperty(soapHeader, "userAgent",
-          userAgentCombiner.getUserAgent(ddpSession.getUserAgent()));
-
-      setAuthenticationHeaders(soapClient, ddpSession);
-
       String namespace =
           ddpApiConfiguration.getNamespacePrefix() + "/"
               + ddpServiceDescriptor.getPackageGroup() + "/"
@@ -105,16 +100,19 @@ public class DdpAxisHeaderHandler implements HeaderHandler<DdpSession, DdpServic
 
       soapClientHandler.setHeaderChild(stub, REQUEST_HEADER_LOCAL_PART, "userAgent",
           userAgentCombiner.getUserAgent(ddpSession.getUserAgent()));
+      soapClientHandler.setHeaderChild(stub, REQUEST_HEADER_LOCAL_PART, "clientCustomerId",
+          ddpSession.getClientCustomerId());
 
       soapClientHandler.setCompression(stub, adsLibConfiguration.isCompressionEnabled());
       soapClientHandler.setRequestTimeout(stub, adsLibConfiguration.getSoapRequestTimeout());
+
+      setAuthenticationHeaders(soapClient, ddpSession);
+
     } catch (InstantiationException e) {
       throw new ServiceException("Unexpected exception.", e);
     } catch (IllegalAccessException e) {
       throw new ServiceException("Unexpected exception.", e);
     } catch (ClassNotFoundException e) {
-      throw new ServiceException("Unexpected exception.", e);
-    } catch (InvocationTargetException e) {
       throw new ServiceException("Unexpected exception.", e);
     } catch (IllegalArgumentException e) {
       throw new ServiceException("Unexpected exception.", e);

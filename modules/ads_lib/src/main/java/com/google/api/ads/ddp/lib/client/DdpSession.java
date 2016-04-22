@@ -42,6 +42,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
 
   private Credential oAuth2Credential;
 
+  private String clientCustomerId;
 
   private final String userAgent;
   private final String endpoint;
@@ -50,15 +51,25 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
 
   private static final String DEFAULT_USER_AGENT = "INSERT_USERAGENT_HERE";
 
+  private static final String DEFAULT_CLIENT_CUSTOMER_ID = "INSERT_CLIENTCUSTOMERID_HERE";
+
   /**
    * Private constructor.
    *
    * @param builder the DdpSession builder
    */
   private DdpSession(Builder builder) {
+    this.clientCustomerId = builder.clientCustomerId;
     this.userAgent = builder.userAgent;
     this.endpoint = builder.endpoint;
     this.oAuth2Credential = builder.oAuth2Credential;
+  }
+
+  /**
+   * Gets the client customer ID.
+   */
+  public String getClientCustomerId() {
+    return clientCustomerId;
   }
 
   /**
@@ -141,6 +152,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
    */
   public static class Builder implements com.google.api.ads.common.lib.utils.Builder<DdpSession> {
 
+    private String clientCustomerId;
     private String userAgent;
     private String endpoint;
     private Credential oAuth2Credential;
@@ -158,6 +170,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
 
     private Builder(DdpSession ddpSessionToClone) {
       this();
+      this.clientCustomerId = ddpSessionToClone.clientCustomerId;
       this.userAgent = ddpSessionToClone.getUserAgent();
       this.endpoint = ddpSessionToClone.getEndpoint();
       this.oAuth2Credential = ddpSessionToClone.getOAuth2Credential();
@@ -198,6 +211,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
      */
     @Override
     public Builder from(Configuration config) {
+      this.clientCustomerId = config.getString("api.ddp.clientCustomerId", null);
       this.userAgent = config.getString("api.ddp.userAgent", null);
       this.endpoint = config.getString("api.ddp.endpoint", null);
 
@@ -210,6 +224,14 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
     public Builder withOAuth2Credential(Credential oAuth2Credential) {
       clearAuthentication();
       this.oAuth2Credential = oAuth2Credential;
+      return this;
+    }
+
+    /**
+     * Includes user agent (any string of your choice). Required.
+     */
+    public Builder withClientCustomerId(String clientCustomerId) {
+      this.clientCustomerId = clientCustomerId;
       return this;
     }
 
@@ -279,6 +301,14 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
       if (this.oAuth2Credential == null) {
         throw new ValidationException(
             "OAuth2 authentication must be used.", "");
+      }
+
+      // Check that client customer id is not empty or the default.
+      if (Strings.isNullOrEmpty(clientCustomerId)
+          || clientCustomerId.contains(DEFAULT_CLIENT_CUSTOMER_ID)) {
+        throw new ValidationException(String.format(
+            "ClientCustomerId must be set and not be the default [%s]", DEFAULT_CLIENT_CUSTOMER_ID),
+            "clientCustomerId");
       }
 
       // Check that user agent is not empty or the default.

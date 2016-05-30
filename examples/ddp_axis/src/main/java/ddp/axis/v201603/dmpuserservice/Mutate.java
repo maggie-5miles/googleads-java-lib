@@ -1,5 +1,6 @@
 package ddp.axis.v201603.dmpuserservice;
 
+import com.beust.jcommander.JCommander;
 import com.google.api.ads.common.lib.auth.OfflineCredentials;
 import com.google.api.ads.ddp.axis.factory.DdpServices;
 import com.google.api.ads.ddp.axis.v201603.dmp.*;
@@ -11,7 +12,16 @@ import com.google.api.client.auth.oauth2.Credential;
  */
 public class Mutate {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] argv) throws Exception {
+    // parse command line parameters
+    Args args = new Args();
+    JCommander jCommander = new JCommander(args, argv);
+    jCommander.setProgramName("Create DMP User List");
+    if (args.help) {
+      jCommander.usage();
+      System.exit(-1);
+    }
+
     // Generate a refreshable OAuth2 credential.
     Credential oAuth2Credential = new OfflineCredentials.Builder()
         .forApi(OfflineCredentials.Api.DDP)
@@ -25,22 +35,23 @@ public class Mutate {
         .withOAuth2Credential(oAuth2Credential)
         .build();
 
-    DdpServices adWordsServices = new DdpServices();
+    DdpServices ddpServices = new DdpServices();
 
-    runExample(adWordsServices, session);
+    runExample(ddpServices, session, args.name, args.description);
   }
 
   public static void runExample(
-      DdpServices ddpServices, DdpSession session) throws Exception {
+      DdpServices ddpServices, DdpSession session,
+      String name, String description) throws Exception {
 
     DmpUserListServiceInterface userListService = ddpServices.get(session, DmpUserListServiceInterface.class);
 
-    ClientCustomerId clientCustomerId = new ClientCustomerId(Product.INVITE_PARTNER, 914039L);
+    ClientCustomerId clientCustomerId = new ClientCustomerId(Product.INVITE_PARTNER, session.getPartnerId());
 
     UserList userList = new BasicUserList();
-    userList.setName("Demographic segment #" + System.currentTimeMillis());
-    userList.setDescription("Target dempographic description");
-    userList.setIntegrationCode("12345");
+    userList.setName(name);
+    userList.setDescription(description);
+//    userList.setIntegrationCode("");
     userList.setMembershipLifeSpan(365L);
 
 
@@ -48,7 +59,6 @@ public class Mutate {
     operation.setOperand(userList);
     operation.setOperator(Operator.ADD);
     UserListOperation[] operations = new UserListOperation[] {operation};
-
 
     UserListReturnValue result = userListService.mutate(clientCustomerId, operations);
 

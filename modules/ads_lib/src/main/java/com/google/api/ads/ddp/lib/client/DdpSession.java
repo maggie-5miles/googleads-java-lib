@@ -43,6 +43,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
   private Credential oAuth2Credential;
 
   private String clientCustomerId;
+  private Long partnerId;
 
   private final String userAgent;
   private final String endpoint;
@@ -60,6 +61,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
    */
   private DdpSession(Builder builder) {
     this.clientCustomerId = builder.clientCustomerId;
+    this.partnerId = builder.partnerId;
     this.userAgent = builder.userAgent;
     this.endpoint = builder.endpoint;
     this.oAuth2Credential = builder.oAuth2Credential;
@@ -70,6 +72,13 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
    */
   public String getClientCustomerId() {
     return clientCustomerId;
+  }
+
+  /**
+   * Gets the partner ID.
+   */
+  public Long getPartnerId() {
+    return partnerId;
   }
 
   /**
@@ -153,6 +162,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
   public static class Builder implements com.google.api.ads.common.lib.utils.Builder<DdpSession> {
 
     private String clientCustomerId;
+    private Long partnerId;
     private String userAgent;
     private String endpoint;
     private Credential oAuth2Credential;
@@ -171,6 +181,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
     private Builder(DdpSession ddpSessionToClone) {
       this();
       this.clientCustomerId = ddpSessionToClone.clientCustomerId;
+      this.partnerId = ddpSessionToClone.partnerId;
       this.userAgent = ddpSessionToClone.getUserAgent();
       this.endpoint = ddpSessionToClone.getEndpoint();
       this.oAuth2Credential = ddpSessionToClone.getOAuth2Credential();
@@ -212,6 +223,7 @@ public class DdpSession implements AdsSession, OAuth2Compatible {
     @Override
     public Builder from(Configuration config) {
       this.clientCustomerId = config.getString("api.ddp.clientCustomerId", null);
+      this.partnerId = config.getLong("api.ddp.partnerId", null);
       this.userAgent = config.getString("api.ddp.userAgent", null);
       this.endpoint = config.getString("api.ddp.endpoint", null);
 

@@ -1,3 +1,19 @@
+* GetRefreshToken
+```
+mvn -X exec:java -Dexec.mainClass="ddp.axis.auth.GetRefreshToken" -Dhttps.proxyHost=localhost -Dhttps.proxyPort=8118
+```
+
+* cd project root
+```
+mvn install -Dmaven.test.skip=true
+```
+
+* cd examples/ddp_axis
+```
+mvn -X compile
+mvn -X exec:java -Dexec.mainClass="ddp.axis.v201609.dmpuserservice.Mutate" -Dexec.args="-n [name] -d [description]" -Dhttps.proxyHost=localhost -Dhttps.proxyPort=8118
+```
+
 Google Ads API Java Client Library
 ==================================
 
